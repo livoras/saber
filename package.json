@@ -1,0 +1,29 @@
+{
+  "name": "facility-boilerplate",
+  "version": "0.0.13",
+  "description": "Develop a facility project's boilerplate",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Thucydide/grunt-boilerplate.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "grunt-livescript": "~0.5.0",
+    "grunt": "~0.4.1",
+    "grunt-release": "~0.6.0",
+    "grunt-contrib-watch": "~0.5.3",
+    "grunt-contrib-clean": "~0.5.0",
+    "grunt-contrib-coffee": "~0.7.0",
+    "grunt-contrib-jasmine": "~0.5.1",
+    "grunt-contrib-connect": "~0.5.0",
+    "grunt-template-jasmine-requirejs": "~0.1.7"
+  },
+  "scripts": {
+    "test": "grunt test"
+  },
+  "keywords": [
+    "facility"
+  ],
+  "author": "Dai Jiahua",
+  "license": "MIT"
+}
