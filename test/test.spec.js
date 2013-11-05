@@ -1,6 +1,6 @@
 define(function(require) {
   
-  describe('Check all libraries is working', function() {
+  describe('Check all libraries are working', function() {
     it('jQuery is working', function() {
       expect(jQuery).toBe($)
     })

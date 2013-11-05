@@ -1,0 +1,15 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 10px;
+  width: 130px;
+}
+
+div.widget {
+  width: 100px;
+  height: 100px;
+  background-color: #ccc;
+}

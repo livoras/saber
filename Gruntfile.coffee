@@ -13,7 +13,7 @@ module.exports = (grunt)->
 
     watch:
       compile:
-        files: ["src/**/*.js", "test/**/*.js", "lib/**/*.js"]
+        files: ["src/**/*", "test/**/*", "lib/**/*"]
         tasks: ["jasmine"]
 
     jasmine:       
@@ -21,7 +21,7 @@ module.exports = (grunt)->
         src: ['src/**/*.js', 'lib/knockout-3.0.0.js']
         options:
           host: 'http://127.0.0.1:9001/'
-          vendor: 'lib/**/jquery-*.js'
+          vendor: ['lib/**/jquery-*.js']
           specs: 'test/**/*.spec.js'
           helpers: 'test/helper.js',
           template: require 'grunt-template-jasmine-requirejs'
@@ -30,8 +30,11 @@ module.exports = (grunt)->
               baseUrl: '.'
               paths:
                 'knockout': './lib/knockout-3.0.0'
-              deps: ['knockout']
-
+                'eventemitter': './lib/eventemitter2'
+              map: 
+                '*':
+                  'text': 'lib/text'
+                  'css': 'lib/css'
 
   grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-contrib-clean"
