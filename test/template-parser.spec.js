@@ -33,7 +33,6 @@ define(function(require) {
     })
 
     it('can parse ko.widget binding inside widget', function() {
-
       widgets['inner'] = false
 
       waitsFor(function() {

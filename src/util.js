@@ -81,12 +81,26 @@ define(function(require) {
     return config.baseWidgetPath + '/' + kind + '/' + kind
   }
 
+  /**
+   * to comment
+   */
+  function inherit (superClass, subClass) {
+    var Fn = function () {};
+    Fn.prototype = superClass.prototype;
+
+    var proto = subClass.prototype = new Fn;
+    proto.constructor = superClass;
+    proto._super_ = superClass;
+  };
+
+
   return {
     type: type,
     load: load,
     resolveStylePath: resolveStylePath,
     resolveTemplatePath: resolveTemplatePath,
-    resolveViewModelPath: resolveViewModelPath
+    resolveViewModelPath: resolveViewModelPath,
+    inherit: inherit
   }
 
 })

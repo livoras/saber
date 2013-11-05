@@ -34,6 +34,22 @@ define(function(require) {
     this.emitter.many.apply(this.emitter, arguments)
   }
 
+  Widget.extend = function(SubWidget) {
+    var SuperWidget = this
+
+    function WidgetInner() {
+      SuperWidget.apply(this, arguments)
+      util.inherit(SuperWidget, SubWidget)
+      SubWidget.apply(this, arguments)
+    }
+
+    WidgetInner.extend = function () {
+      Widget.extend.apply(WidgetInner, arguments)
+    }
+
+    return WidgetInner
+  }
+
   return Widget
 
 })
