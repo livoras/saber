@@ -31,6 +31,7 @@ module.exports = (grunt)->
               paths:
                 'knockout': './lib/knockout-3.0.0'
                 'eventemitter': './lib/eventemitter2'
+                'crossroads': './lib/crossroads.min'
               map: 
                 '*':
                   'text': 'lib/text'

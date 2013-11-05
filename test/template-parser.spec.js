@@ -2,7 +2,7 @@ define(function(require) {
   var entryTpl = require('text!./widgets/fake-entry.html')
   var config = require('src/config')
   var _ = require('src/util')
-  var widgets = require('src/saber').widgets
+  var widgets = require('src/template-parser').widgets
 
   config.baseWidgetPath = 'test/widgets'
 

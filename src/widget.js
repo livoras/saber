@@ -39,17 +39,17 @@ define(function(require) {
 
     function WidgetInner() {
       SuperWidget.apply(this, arguments)
-      util.inherit(SuperWidget, SubWidget)
       SubWidget.apply(this, arguments)
     }
 
+    util.inherit(SuperWidget, WidgetInner)
+
     WidgetInner.extend = function () {
-      Widget.extend.apply(WidgetInner, arguments)
+      return Widget.extend.apply(WidgetInner, arguments)
     }
 
     return WidgetInner
   }
 
   return Widget
-
 })

@@ -2,14 +2,14 @@ define(function(require) {
 
   var util = require('./util')
   var config = require('./config')
-  var widgets = require('./saber').widgets
+  var widgets = {}
 
   ko.bindingHandlers.widget = {
     init: function(ele, valueAccessor) {
       // do nothing
     },
-    // "<div data-bind='widget: {kind: 'widget', container: $data}'>"
 
+    // "<div data-bind='widget: {kind: 'widget', container: $data}'>"
     update: function(ele, valueAccessor) {
       var settings = valueAccessor()
       var kind = settings.kind
@@ -31,12 +31,13 @@ define(function(require) {
           vm.viewAttached(dom)
         }
 
-        widgets[kind] = {
-          kind: kind,
-          view: dom,
-          viewModel: vm
-        }
+        // Code below is just used for BDD test
+        widgets[kind] = { kind: kind, view: dom, viewModel: vm }
       })
     }
+  }
+
+  return {
+    widgets: widgets
   }
 })
