@@ -2,11 +2,16 @@ define(function(require) {
   var entryTpl = require('text!./widgets/fake-entry.html')
   var config = require('src/config')
   var _ = require('src/util')
-  var widgets = require('src/template-parser').widgets
+  var widgets = {}
+
+  require('src/template-parser')
 
   config.baseWidgetPath = 'test/widgets'
 
   describe('ko.widget binding handler successfully parsed template and load widget', function() {
+    _.emitter.on('template-parsed', function(data) {
+      widgets[data.kind] = data
+    })
 
     it('can load entry template', function() {
       expect(_.type(entryTpl)).toBe('string')

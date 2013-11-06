@@ -1,13 +1,17 @@
 define(function(require) {
   var router = require('src/router')
   var config = require('src/config')
-  var widgets = require('src/template-parser').widgets
+  var widgets = {}
   var route = router.route
   var _ = require('src/util')
+  require('src/template-parser')
 
   config.baseWidgetPath = 'test/widgets'
 
   describe('Test if router works', function() {
+    _.emitter.on('template-parsed', function(data) {
+      widgets[data.kind] = data
+    })
 
     it('Test routiejs library loaded', function() {
       expect(_.type(route)).toBe('function')
@@ -54,6 +58,42 @@ define(function(require) {
         })
       })
 
+      it('Unmap a route to widget', function() {
+        var callback = jasmine.createSpy()
+        var that = false
+        var other = false
+
+        route('')
+        router.map('work', 'hello')
+        _.emitter.on('active-mapping:hello', function() {
+          that = true
+          callback()
+        })
+        route('work')
+        waitsFor(function() {
+          return that
+        }, 'load widget', 1000)
+        runs(function() {
+          expect(callback).toHaveBeenCalled()
+          other = true
+          router.unmap('work')
+          route('work')
+          that = false
+        })
+
+        setTimeout(function() {
+          that = true
+        }, 1000)
+
+        waitsFor(function() {
+          return other && that
+        }, 'unmap mapping', 1000)
+
+        runs(function() {
+          expect(callback.calls.length).toBe(1)
+        })
+      })
+
       describe('Test router maps to widget automaticly', function() {
         it('Auto mapping works', function() {
           router.mapAuto('*')
@@ -71,11 +111,14 @@ define(function(require) {
         })
 
         it('Mapping will replace widget host container completely', function() {
-          widgets['sample'] = false
+          var flag = false
+          _.emitter.on('active-mapping:sample', function() {
+            flag = true
+          })
           route('sample')
           waitsFor(function() {
-            return widgets['sample']
-          }, 'router callback', 1000)
+            return flag
+          })
           runs(function() {
             expect(callback).toHaveBeenCalledWith('data')
             expect($('body').find('div.sample:eq(0)').html()).toEqual('Hello Sample')
@@ -84,32 +127,19 @@ define(function(require) {
         })
 
         it('Auto mapping will not affluence custom mapping', function() {
-          widgets['stupid'] = false
+          var flag = false
+          _.emitter.on('active-mapping:sample', function() {
+            flag = true
+          })
           route('stupid')
           waitsFor(function() {
-            return widgets['sample']
-          }, 'router callback', 1000)
+            return flag
+          })
           runs(function() {
             expect(callback).toHaveBeenCalledWith('data')
             expect($('body').find('div.sample:eq(0)').html()).toEqual('Hello Sample')
             expect($('body').find('div.name:eq(0)').html()).toBe(void 0)
           })
-        })
-      })
-
-      it('Unmap a route to widget', function() {
-        var flag = false
-        widgets['sample'] = false
-        router.unmap('stupid')
-        setTimeout(function() {
-          flag = true
-        }, 500)
-        route('stupid')
-        waitsFor(function() {
-          return flag
-        })
-        runs(function() {
-          expect(widgets['sample']).toBeFalsy()
         })
       })
 

@@ -1,5 +1,6 @@
 define(function(require) {
   var config = require('./config')
+  var EventEmitter = require('eventemitter')
 
   /**
    * to comment
@@ -19,13 +20,23 @@ define(function(require) {
   /**
    * to comment
    */
+  var hasConsole = 'console' in window
   function log() {
+    if(hasConsole && config.debug) {
+      console.log.apply(console, ['Saber Debug:', arguments])
+    }
   }
 
   function warn() {
+    if(hasConsole && config.debug) {
+      console.warn.apply(console, ['Saber Warn:', arguments])
+    }
   }
 
   function error() {
+    if(hasConsole && config.debug) {
+      console.error.apply(console, ['Saber Error:', arguments])
+    }
   }
 
   /**
@@ -92,6 +103,7 @@ define(function(require) {
    */
   function each(obj, iterator, context) {
     var nativeForEach = [].forEach
+    var breaker = {}
     if (obj == null) return
     if (nativeForEach && obj.forEach === nativeForEach) {
       obj.forEach(iterator, context)
@@ -137,10 +149,15 @@ define(function(require) {
     each: each,
     extend: extend,
     load: load,
+    log: log,
+    error: error,
+    warn: warn,
     resolveStylePath: resolveStylePath,
     resolveTemplatePath: resolveTemplatePath,
     resolveViewModelPath: resolveViewModelPath,
-    inherit: inherit
+    inherit: inherit,
+    EventEmitter: EventEmitter,
+    emitter: new EventEmitter
   }
 
 })

@@ -36,7 +36,8 @@ define(function(require) {
         }
 
         // Code below is just used for BDD test
-        widgets[kind] = { kind: kind, view: dom, viewModel: vm }
+        util.emitter.emit('template-parsed', { kind: kind, view: dom, viewModel: vm })
+        util.emitter.emit('template-parsed:' + kind, { kind: kind, view: dom, viewModel: vm })
       })
     }
   }
