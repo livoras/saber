@@ -1,0 +1,9 @@
+body {
+  margin-top: 10px;
+}
+
+div.tab2 {
+  background-color: #ccc;
+  width: 200px;
+  height: 200px;
+}

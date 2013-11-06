@@ -69,22 +69,60 @@ define(function(require) {
     return 'css!' + moduleName
   }
 
-  function resolveTemplatePath(kind) {
-    return config.baseWidgetPath + '/' + kind + '/' + kind + '.html'
-  }
-
-  function resolveStylePath(kind) {
-    return config.baseWidgetPath + '/' + kind + '/' + kind + '.css'
-  }
-
-  function resolveViewModelPath(kind) {
-    return config.baseWidgetPath + '/' + kind + '/' + kind
-  }
 
   /**
    * to comment
    */
-  function inherit (superClass, subClass) {
+  function resolveTemplatePath(kind) {
+    return kind + '.html'
+  }
+
+  function resolveStylePath(kind) {
+    return kind + '.css'
+  }
+
+  function resolveViewModelPath(kind) {
+    return kind
+  }
+
+
+
+  /**
+   * to comment
+   */
+  function each(obj, iterator, context) {
+    var nativeForEach = [].forEach
+    if (obj == null) return
+    if (nativeForEach && obj.forEach === nativeForEach) {
+      obj.forEach(iterator, context)
+    } else if (obj.length === +obj.length) {
+      for (var i = 0, length = obj.length; i < length; i++) {
+        if (iterator.call(context, obj[i], i, obj) === breaker) return
+      }
+    } else {
+      var keys = _.keys(obj)
+      for (var i = 0, length = keys.length; i < length; i++) {
+        if (iterator.call(context, obj[keys[i]], keys[i], obj) === breaker) return
+      }
+    }
+  }
+
+  function extend(obj) {
+    each([].slice.call(arguments, 1), function(source) {
+      if (source) {
+        for (var prop in source) {
+          obj[prop] = source[prop];
+        }
+      }
+    });
+    return obj; 
+  }
+
+
+  /**
+   * to comment
+   */
+  function inherit(superClass, subClass) {
     var Fn = function () {}
     Fn.prototype = superClass.prototype
 
@@ -96,6 +134,8 @@ define(function(require) {
 
   return {
     type: type,
+    each: each,
+    extend: extend,
     load: load,
     resolveStylePath: resolveStylePath,
     resolveTemplatePath: resolveTemplatePath,

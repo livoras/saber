@@ -8,7 +8,7 @@ define(function(require) {
 
   describe('ko.widget binding handler successfully parsed template and load widget', function() {
 
-    it('can load entryTpl', function() {
+    it('can load entry template', function() {
       expect(_.type(entryTpl)).toBe('string')
     })
 

@@ -3,6 +3,15 @@ define(function(require) {
 
   describe('Test util functionalities', function() {
 
+    describe("Utilities are works", function() {
+      it('Test `extend`', function() {
+        var a = {'name': 'Jerry'} 
+        var b = {'age': 34}
+        util.extend(a, b)
+        expect(a.age).toBe(34)
+      })
+    })
+
     describe('It ought to load css, html, and js successfully with `promise`', function() {
       var $tpl
 

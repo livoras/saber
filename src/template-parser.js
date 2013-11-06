@@ -13,9 +13,12 @@ define(function(require) {
     update: function(ele, valueAccessor) {
       var settings = valueAccessor()
       var kind = settings.kind
-      var tplPath = util.resolveTemplatePath(kind)
-      var stylePath = util.resolveStylePath(kind)
-      var widgetViewModelPath = util.resolveViewModelPath(kind)
+      var widgetPath = config.baseWidgetPath + '/' + kind + '/'
+
+      var tplPath = widgetPath + util.resolveTemplatePath(kind)
+      var stylePath = widgetPath + util.resolveStylePath(kind)
+      var widgetViewModelPath = widgetPath + util.resolveViewModelPath(kind)
+
       var styleDfd = util.load(stylePath)
       var vmDfd = util.load(widgetViewModelPath) 
       var tplDfd = util.load(tplPath) 
@@ -26,6 +29,7 @@ define(function(require) {
         var vm = new WidgetViewModel(dom, settings)
 
         ko.applyBindings(vm, dom)
+        $(ele).append($dom)
 
         if(util.type(vm.viewAttached) === 'function') {
           vm.viewAttached(dom)

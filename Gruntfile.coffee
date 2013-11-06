@@ -21,7 +21,7 @@ module.exports = (grunt)->
         src: ['src/**/*.js', 'lib/knockout-3.0.0.js']
         options:
           host: 'http://127.0.0.1:9001/'
-          vendor: ['lib/**/jquery-*.js']
+          vendor: ['lib/**/jquery-*.js', 'lib/routie.min.js']
           specs: 'test/**/*.spec.js'
           helpers: 'test/helper.js',
           template: require 'grunt-template-jasmine-requirejs'
@@ -29,9 +29,9 @@ module.exports = (grunt)->
             requireConfig:
               baseUrl: '.'
               paths:
+                # Knockout should not be included in real applicatoin
                 'knockout': './lib/knockout-3.0.0'
                 'eventemitter': './lib/eventemitter2'
-                'crossroads': './lib/crossroads.min'
               map: 
                 '*':
                   'text': 'lib/text'
