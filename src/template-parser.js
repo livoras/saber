@@ -1,6 +1,6 @@
 define(function(require) {
 
-  var util = require('./util')
+  var _ = require('./util')
   var config = require('./config')
   var widgets = {}
 
@@ -15,13 +15,13 @@ define(function(require) {
       var kind = settings.kind
       var widgetPath = config.baseWidgetPath + '/' + kind + '/'
 
-      var tplPath = widgetPath + util.resolveTemplatePath(kind)
-      var stylePath = widgetPath + util.resolveStylePath(kind)
-      var widgetViewModelPath = widgetPath + util.resolveViewModelPath(kind)
+      var tplPath = widgetPath + _.resolveTemplatePath(kind)
+      var stylePath = widgetPath + _.resolveStylePath(kind)
+      var widgetViewModelPath = widgetPath + _.resolveViewModelPath(kind)
 
-      var styleDfd = util.load(stylePath)
-      var vmDfd = util.load(widgetViewModelPath) 
-      var tplDfd = util.load(tplPath) 
+      var styleDfd = _.load(stylePath)
+      var vmDfd = _.load(widgetViewModelPath) 
+      var tplDfd = _.load(tplPath) 
 
       $.when(tplDfd, vmDfd, styleDfd).then(function(tpl, WidgetViewModel) {
         var $dom = $(tpl)
@@ -31,13 +31,14 @@ define(function(require) {
         ko.applyBindings(vm, dom)
         $(ele).append($dom)
 
-        if(util.type(vm.viewAttached) === 'function') {
+        if(_.type(vm.viewAttached) === 'function') {
           vm.viewAttached(dom)
         }
 
-        // Code below is just used for BDD test
-        util.emitter.emit('template-parsed', { kind: kind, view: dom, viewModel: vm })
-        util.emitter.emit('template-parsed:' + kind, { kind: kind, view: dom, viewModel: vm })
+        _.log('Loaded Widget ' + kind)
+
+        _.emitter.emit('template-parsed', { kind: kind, view: dom, viewModel: vm })
+        _.emitter.emit('template-parsed:' + kind, { kind: kind, view: dom, viewModel: vm })
       })
     }
   }

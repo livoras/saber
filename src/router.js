@@ -10,7 +10,6 @@ define(function(require) {
 
   var route = router.route = routie
   var maps = {}
-  var widgetsCache = {}
 
   function mapAuto(widgetNames) {
     if (widgetNames === '*' || _.type(widgetNames) === 'undefined') {
@@ -66,20 +65,10 @@ define(function(require) {
   }
 
   function activeMapping(widgetName, callback) {
-    var $cahche = widgetsCache[widgetName]
-
-    if (!$cahche) {
-      var $widget = $('<div data-bind="widget: {kind:' + "'" + widgetName + "'" + '}">' + '</div>')
-      var widgetDom = $widget.get(0)
-      ko.applyBindings({}, widgetDom)
-      config.$host.html("").append($widget)
-      widgetsCache[widgetName] = $widget
-      _.log('Load widget ' + widgetName + ' for the first time')
-    } else {
-      var $widget = $cahche
-      config.$host.html("").append($cahche)
-      _.log('Load widget ' + widgetName + ' from cahche')
-    }
+    var $widget = $('<div data-bind="widget: {kind:' + "'" + widgetName + "'" + '}">' + '</div>')
+    var widgetDom = $widget.get(0)
+    ko.applyBindings({}, widgetDom)
+    config.$host.html($widget)
 
     if (_.type(callback) === 'function') {
       callback()

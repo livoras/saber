@@ -23,19 +23,25 @@ define(function(require) {
   var hasConsole = 'console' in window
   function log() {
     if(hasConsole && config.debug) {
-      console.log.apply(console, ['Saber Debug:', arguments])
+      try {
+        console.log.apply(console, ['Saber Debug:', arguments])
+      } catch (ignore) {}
     }
   }
 
   function warn() {
     if(hasConsole && config.debug) {
-      console.warn.apply(console, ['Saber Warn:', arguments])
+      try {
+        console.warn.apply(console, ['Saber Warn:', arguments])
+      } catch (ignore) {}
     }
   }
 
   function error() {
     if(hasConsole && config.debug) {
-      console.error.apply(console, ['Saber Error:', arguments])
+      try {
+        console.error.apply(console, ['Saber Error:', arguments])
+      } catch (ignore) {}
     }
   }
 
@@ -57,7 +63,6 @@ define(function(require) {
     }
 
     require([moduleName], function(loadedModule) {
-      log('Loaded ' + moduleName)
       dfd.resolve(loadedModule)
     })
 
