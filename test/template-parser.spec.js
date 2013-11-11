@@ -4,7 +4,7 @@ define(function(require) {
   var _ = require('src/util')
   var widgets = {}
 
-  require('src/template-parser')
+  // require('src/template-parser')
 
   config.baseWidgetPath = 'test/widgets'
 
