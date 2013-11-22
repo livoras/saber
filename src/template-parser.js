@@ -2,7 +2,7 @@ define(function(require) {
 
   var _ = require('./util')
   var config = require('./config')
-  var widgets = {}
+  var widgetCaches = {}
 
   ko.bindingHandlers.widget = {
     init: function(ele, valueAccessor) {
@@ -16,14 +16,6 @@ define(function(require) {
       var settings = valueAccessor()
       var kind = settings.kind
       var widgetPath = config.baseWidgetPath + '/' + kind + '/'
-
-      var tplPath = widgetPath + _.resolveTemplatePath(kind)
-      var stylePath = widgetPath + _.resolveStylePath(kind)
-      var widgetViewModelPath = widgetPath + _.resolveViewModelPath(kind)
-
-      var styleDfd = _.load(stylePath)
-      var vmDfd = _.load(widgetViewModelPath) 
-      var tplDfd = _.load(tplPath) 
 
       var dataParts = {}
 
@@ -40,14 +32,36 @@ define(function(require) {
         })
       }
 
-      $.when(tplDfd, vmDfd, styleDfd).then(parseWidgetAfterAllLoaded)
-
       $ele.html('')
 
-      function parseWidgetAfterAllLoaded(tpl, WidgetViewModel, style) {
+      if(widgetCaches[kind]) { // check if have cache the widget
+        var cache = widgetCaches[kind]
+        setTimeout(function() {
+          parseWidgetAfterAllLoaded(cache.tpl, cache.viewModel, true)
+        }, 0)
+      } else {
+        var tplPath = widgetPath + _.resolveTemplatePath(kind)
+        var stylePath = widgetPath + _.resolveStylePath(kind)
+        var widgetViewModelPath = widgetPath + _.resolveViewModelPath(kind)
+        var styleDfd = _.load(stylePath)
+        var vmDfd = _.load(widgetViewModelPath) 
+        var tplDfd = _.load(tplPath) 
+        $.when(tplDfd, vmDfd).then(parseWidgetAfterAllLoaded)
+      }
+
+      function parseWidgetAfterAllLoaded(tpl, WidgetViewModel, fromCache) {
         var $dom = $(tpl)
         var dom = $dom.get(0)
         var vm = new WidgetViewModel(dom, settings)
+
+        if(!fromCache) {
+          var cache = widgetCaches[kind] = {}
+          cache.tpl = tpl
+          cache.viewModel = WidgetViewModel
+          _.log('Loaded Widget ' + kind + ' from server')
+        } else {
+          _.log('Loaded Widget ' + kind + ' from cache')
+        }
 
         ko.applyBindings(vm, dom)
         resolveParts()
@@ -57,9 +71,7 @@ define(function(require) {
           vm.viewAttached(dom)
         }
 
-        _.log('Loaded Widget ' + kind)
-
-        var emitData = { kind: kind, view: dom, viewModel: vm, parts: dataParts}
+        var emitData = { kind: kind, view: dom, viewModel: vm, parts: dataParts, fromCache: fromCache}
         _.emitter.emit('template-parsed', emitData)
         _.emitter.emit('template-parsed:' + kind, emitData)
 
@@ -78,7 +90,4 @@ define(function(require) {
     }
   }
 
-  return {
-    widgets: widgets
-  }
 })
