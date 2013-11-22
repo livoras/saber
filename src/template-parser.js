@@ -11,6 +11,7 @@ define(function(require) {
 
     // "<div data-bind='widget: {kind: 'widget', container: $data}'>"
     update: function(ele, valueAccessor, allBindings, bindingContext) {
+      // $ele is the dom which declares using certain widget
       var $ele = $(ele)
       var settings = valueAccessor()
       var kind = settings.kind
@@ -25,29 +26,31 @@ define(function(require) {
       var tplDfd = _.load(tplPath) 
 
       var dataParts = {}
-      $parts = $ele.find("[data-part]")
-      $parts.each(function(part, i) {
-        var $part = $(part)
-        var partName = $part.attr('data-part')
-        dataParts[partName] = $part.html()
-      })
 
-      $.when(tplDfd, vmDfd, styleDfd).then(function(tpl, WidgetViewModel) {
+      // For `data-part` funtinality, here will cache all html
+      // of dom which has `data-part` attribute
+      cachesParts()
+
+      function cachesParts() {
+        $parts = $ele.find("[data-part]")
+        $parts.each(function(i, part) {
+          var $part = $(part)
+          var partName = $part.attr('data-part')
+          dataParts[partName] = $part.html()
+        })
+      }
+
+      $.when(tplDfd, vmDfd, styleDfd).then(parseWidgetAfterAllLoaded)
+
+      $ele.html('')
+
+      function parseWidgetAfterAllLoaded(tpl, WidgetViewModel, style) {
         var $dom = $(tpl)
         var dom = $dom.get(0)
         var vm = new WidgetViewModel(dom, settings)
 
         ko.applyBindings(vm, dom)
-
-        // /* resolve data-part */
-        for(var partName in dataParts) {
-          var dataPartTpl = dataParts[partName]
-          var $dataPartDom = $(dataPartTpl)
-          var dataPartDom = $dataPartDom.get(0)
-          ko.applyBindings(bindingContext.$data, dataPartDom)
-          $dom.find('[data-part="' + partName + '"]').html($dataPartDom)
-        }
-
+        resolveParts()
         $ele.html($dom)
 
         if(_.type(vm.viewAttached) === 'function') {
@@ -56,9 +59,22 @@ define(function(require) {
 
         _.log('Loaded Widget ' + kind)
 
-        _.emitter.emit('template-parsed', { kind: kind, view: dom, viewModel: vm })
-        _.emitter.emit('template-parsed:' + kind, { kind: kind, view: dom, viewModel: vm })
-      })
+        var emitData = { kind: kind, view: dom, viewModel: vm, parts: dataParts}
+        _.emitter.emit('template-parsed', emitData)
+        _.emitter.emit('template-parsed:' + kind, emitData)
+
+        function resolveParts() {
+          /* resolve data-part */
+          for(var partName in dataParts) {
+            var dataPartTpl = dataParts[partName]
+            var $dataPartDom = $(dataPartTpl)
+            var dataPartDom = $dataPartDom.get(0)
+            ko.applyBindings(bindingContext, dataPartDom)
+            _.log('Parsing data part', partName, bindingContext);
+            $dom.find('[data-part="' + partName + '"]').html($dataPartDom)
+          }
+        }
+      }
     }
   }
 
