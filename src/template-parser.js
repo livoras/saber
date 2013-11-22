@@ -2,6 +2,7 @@ define(function(require) {
 
   var _ = require('./util')
   var config = require('./config')
+  var events = require('./events')
   var widgetCaches = {}
 
   ko.bindingHandlers.widget = {
@@ -16,8 +17,13 @@ define(function(require) {
       var settings = valueAccessor()
       var kind = settings.kind
       var widgetPath = config.baseWidgetPath + '/' + kind + '/'
-
       var dataParts = {}
+
+      // set container to settings if not passing it in
+      if (!settings.container) {
+        settings.container = {}
+        events.includeIn(settings.container)
+      }
 
       // For `data-part` funtinality, here will cache all html
       // of dom which has `data-part` attribute
@@ -62,6 +68,9 @@ define(function(require) {
         } else {
           _.log('Loaded Widget ' + kind + ' from cache')
         }
+
+        vm.$data = vm
+        vm.$parent = bindingContext
 
         ko.applyBindings(vm, dom)
         resolveParts()
