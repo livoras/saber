@@ -3,7 +3,7 @@ define(function(require) {
   var util = require('./util')
   var events = require('./events')
 
-  function Widget(arguments) {
+  function Widget() {
     events.includeIn(this)
   }
 
