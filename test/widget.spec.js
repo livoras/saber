@@ -37,7 +37,7 @@ define(function(require) {
       widget.trigger('some event', 'data')
       expect(callback).toHaveBeenCalledWith('data')
       expect(callback.calls.length).toBe(1)
-      expect(widget.emitter).not.toBe(widget2.emitter)
+      expect(widget.on).not.toBe(widget2.on)
     })
 
     describe('Sub Widget extends from the Super Widget', function() {
