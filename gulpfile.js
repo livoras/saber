@@ -3,19 +3,22 @@ var browserify = require('gulp-browserify');
 var mocha = require('gulp-mocha')
 
 gulp.task('browserify', function() {
-  gulp.src(['src/**/*.js', 'test/**/*.Spec.js'])
+  return gulp.src(['src/**/*.js', 'test/**/*.Spec.js'])
       .pipe(browserify({
         debug : !gulp.env.production
       }))
       .pipe(gulp.dest('./bin'))
 })
 
-gulp.task('mocha', function() {
-  gulp.src('bin/**/*.Spec.js')
-      .pipe(mocha())
+gulp.task('test', ['browserify'], function() {
+  gulp
+    .src('bin/**/*.Spec.js')
+    .pipe(mocha({'reporter': 'spec'}))
+    .on('error', function() {
+      console.log('Test failed.')
+    })
 })
 
-
-gulp.task('default', ['browserify', 'mocha'], function() {
-  gulp.watch(['src/**/*.js', 'test/**/*.Spec.js'], ['browserify', 'mocha'])
+gulp.task('default', ['test'], function() {
+  gulp.watch(['src/**/*.js', 'test/**/*.Spec.js'], ['test'])
 })
